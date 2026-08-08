@@ -1,6 +1,13 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
+// يقرأ البراندنغ الحي (اسم المنصة، اللون، الشعار) من قاعدة البيانات في
+// كل استدعاء - لنفس السبب الموثَّق في app/layout.tsx و super-admin/layout.tsx
+// لا يمكن ولا يجب توليده كملف ثابت وقت البناء (حيث لا يتوفر DATABASE_URL
+// على Vercel أصلاً في تلك المرحلة، وحتى لو توفّر فالمانيفست يجب أن يعكس
+// آخر برندنغ محفوظ لا نسخة مجمَّدة وقت البناء).
+export const dynamic = "force-dynamic";
+
 /**
  * اصطلاح Next.js الأصلي لملفات المانيفست الديناميكية (App Router) - يُخدَّم
  * تلقائيًا على `/manifest.webmanifest` ويُدرَج تلقائيًا كـ

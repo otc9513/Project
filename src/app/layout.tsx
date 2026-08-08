@@ -3,6 +3,13 @@ import type { Metadata, Viewport } from "next";
 import { prisma } from "@/lib/prisma";
 import "./globals.css";
 
+// الـ layout الجذري يقرأ البراندنغ الحي (Favicon، أيقونة PWA، اسم
+// المنصة) من قاعدة البيانات في generateMetadata لكل صفحة في التطبيق -
+// بما فيها الصفحات العامة مثل /login التي لا تقع تحت app/layout.tsx أو
+// super-admin/layout.tsx. لنفس السبب الموثَّق هناك، يجب ألا يُجمَّد أي
+// شيء هنا وقت البناء.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, brandAssets] = await Promise.all([
     prisma.platformSettings.findUnique({ where: { id: "singleton" } }),
