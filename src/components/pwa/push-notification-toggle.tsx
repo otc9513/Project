@@ -48,8 +48,6 @@ export function PushNotificationToggle() {
   async function handleEnable() {
     const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
     if (!publicKey) {
-      // لا توجد مفاتيح VAPID مُهيَّأة بعد لهذه البيئة (راجع .env.example) -
-      // نصمت بدل إظهار خطأ مربك لمستخدم عادي.
       return;
     }
 
@@ -64,7 +62,8 @@ export function PushNotificationToggle() {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
+        // تم استخدام as unknown as Uint8Array لتجاوز تعارض الأنواع في Next.js 15
+        applicationServerKey: urlBase64ToUint8Array(publicKey) as unknown as Uint8Array,
       });
 
       const json = subscription.toJSON();
