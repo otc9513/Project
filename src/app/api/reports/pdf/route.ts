@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
     const pdfBytes = await generatePdfReport(report, tenant.name);
 
-    return new NextResponse(Buffer.from(pdfBytes), {
+    return new NextResponse(new Uint8Array(pdfBytes), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
