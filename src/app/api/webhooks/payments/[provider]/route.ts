@@ -24,8 +24,9 @@ import { checkRateLimit, RateLimitExceededError } from "@/lib/security/rate-limi
  */
 export async function POST(
   request: Request,
-  { params }: { params: { provider: string } }
+  { params }: { params: Promise<{ provider: string }> }
 ) {
+  const { provider } = await params;
   const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   try {
     await checkRateLimit(`webhook-payment:${clientIp}`, 30, 60 * 1000);
@@ -46,7 +47,7 @@ export async function POST(
     request.headers.get("x-signature");
 
   try {
-    const result = await paymentService.handleWebhook(params.provider, rawBody, signature);
+    const result = await paymentService.handleWebhook(provider, rawBody, signature);
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     const message = error instanceof Error ? error.message : "فشل معالجة webhook";

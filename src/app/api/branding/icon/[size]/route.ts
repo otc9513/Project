@@ -28,9 +28,10 @@ const memoryCache = new Map<string, { buffer: Buffer; sourceUrl: string }>();
  */
 export async function GET(
   request: Request,
-  { params }: { params: { size: string } }
+  { params }: { params: Promise<{ size: string }> }
 ) {
-  const size = Number(params.size);
+  const { size: sizeParam } = await params;
+  const size = Number(sizeParam);
   if (!ALLOWED_SIZES.has(size)) {
     return NextResponse.json({ error: "مقاس غير مدعوم" }, { status: 400 });
   }
