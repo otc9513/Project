@@ -28,6 +28,10 @@ Sentry.init({
   debug: false,
 });
 
-// يُطلَب من Next.js 15 عند استخدام Sentry مع App Router لالتقاط أخطاء
-// التنقّل بين الصفحات (router transitions) في متصفح العميل.
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+// ملاحظة: `Sentry.captureRouterTransitionStart` متاحة فقط اعتبارًا من
+// @sentry/nextjs v9+. النسخة المثبَّتة هنا هي v8.40.0 (راجع package.json)
+// ولا تصدّر هذه الدالة، لذا حُذف تصديرها لتفادي خطأ نوع عند البناء.
+// تتبّع أداء التنقّل بين الصفحات لا يزال يعمل تلقائيًا عبر تكامل
+// Sentry الافتراضي مع App Router في v8. عند ترقية الحزمة إلى v9+
+// يمكن إعادة إضافة:
+//   export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
