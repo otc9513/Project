@@ -2,6 +2,12 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { requirePlatformAdmin } from "@/lib/platform/context";
 
+// كل صفحة تحت /super-admin تعتمد على جلسة Super Admin حيّة عبر
+// requirePlatformAdmin (وتاليًا على قاعدة بيانات حية عبر Prisma)، لنفس
+// السبب الموثَّق في src/app/app/layout.tsx - يجب ألا تُجمَّد كصفحات
+// ثابتة وقت البناء على Vercel حيث لا يتوفر DATABASE_URL في تلك المرحلة.
+export const dynamic = "force-dynamic";
+
 const NAV_ITEMS = [
   { href: "/super-admin", label: "نظرة عامة" },
   { href: "/super-admin/tenants", label: "المستأجرون" },

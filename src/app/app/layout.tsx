@@ -7,6 +7,14 @@ import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { PushNotificationToggle } from "@/components/pwa/push-notification-toggle";
 import { platformAnnouncementService } from "@/features/platform-announcements/service/platform-announcement.service";
 
+// كل صفحة تحت /app تعتمد على جلسة المستخدم/سياق المستأجر الحاليين عبر
+// requireTenantContext (وتاليًا على قاعدة بيانات حية عبر Prisma) - لا
+// معنى ولا إمكانية لتجميدها كصفحة ثابتة (Static) وقت البناء. هذا
+// الإعلان هنا في الـ layout الأب يسري تلقائيًا على كل الصفحات الفرعية
+// تحت /app، فيمنع Next.js من محاولة Prerendering لها وقت `next build`
+// (حيث لا يتوفر DATABASE_URL أصلاً في تلك المرحلة على Vercel).
+export const dynamic = "force-dynamic";
+
 /**
  * وفق مبدأ "Mobile First" في المواصفات: التنقّل الأساسي شريط سفلي بأزرار
  * كبيرة، وليس قائمة جانبية تقليدية (التي تُستخدم فقط على الشاشات الكبيرة).
