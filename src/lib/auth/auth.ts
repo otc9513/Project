@@ -21,7 +21,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       await createTenantForNewUser({
         userId: user.id,
         userEmail: user.email,
-        userName: user.name ?? user.email.split("@")[0],
+        userName: user.name ?? user.email.split("@")[0] ?? user.email,
       });
       // مستقل تمامًا عن إنشاء المساحة أعلاه: عضوية فريق تشغيل المنصة لا
       // علاقة لها بامتلاك مساحة عمل كمستأجر عادي (قد يجتمعان لنفس الشخص).
