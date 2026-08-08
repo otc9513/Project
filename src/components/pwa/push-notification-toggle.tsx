@@ -60,10 +60,17 @@ export function PushNotificationToggle() {
       }
 
       const registration = await navigator.serviceWorker.ready;
+      const rawKey = urlBase64ToUint8Array(publicKey);
+      
+      // التعديل هنا: استخدام slice لضمان أننا نمرر ArrayBuffer متوافق مع TypeScript
+      const subKey = rawKey.buffer.slice(
+        rawKey.byteOffset,
+        rawKey.byteOffset + rawKey.byteLength
+      );
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        // تم استخدام as unknown as Uint8Array لتجاوز تعارض الأنواع في Next.js 15
-        applicationServerKey: urlBase64ToUint8Array(publicKey) as unknown as Uint8Array,
+        applicationServerKey: subKey,
       });
 
       const json = subscription.toJSON();
