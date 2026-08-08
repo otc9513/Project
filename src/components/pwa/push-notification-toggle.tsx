@@ -48,6 +48,8 @@ export function PushNotificationToggle() {
   async function handleEnable() {
     const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
     if (!publicKey) {
+      // لا توجد مفاتيح VAPID مُهيَّأة بعد لهذه البيئة (راجع .env.example) -
+      // نصمت بدل إظهار خطأ مربك لمستخدم عادي.
       return;
     }
 
@@ -63,13 +65,18 @@ export function PushNotificationToggle() {
       
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
+        // استخدام BufferSource لتجاوز تعارض الأنواع في Next.js 15
         applicationServerKey: urlBase64ToUint8Array(publicKey) as unknown as BufferSource,
       });
 
       const json = subscription.toJSON();
+      if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) {
+        throw new Error("بيانات اشتراك الإشعارات غير مكتملة");
+      }
+
       await subscribeToPushAction({
-        endpoint: json.endpoint!,
-        keys: { p256dh: json.keys!.p256dh, auth: json.keys!.auth },
+        endpoint: json.endpoint,
+        keys: { p256dh: json.keys.p256dh, auth: json.keys.auth },
         userAgent: navigator.userAgent,
       });
       setStatus("subscribed");
