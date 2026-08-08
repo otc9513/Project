@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { requireTenantContext } from "@/lib/tenant/context";
 import { BottomNav } from "./_components/bottom-nav";
 import { AnnouncementsBanner } from "./_components/announcements-banner";
@@ -13,7 +14,7 @@ import { platformAnnouncementService } from "@/features/platform-announcements/s
 export default async function AppLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   // يفرض وجود جلسة ومساحة عمل نشطة قبل عرض أي صفحة داخل /app
   const ctx = await requireTenantContext();

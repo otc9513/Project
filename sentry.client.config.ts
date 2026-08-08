@@ -27,3 +27,7 @@ Sentry.init({
 
   debug: false,
 });
+
+// يُطلَب من Next.js 15 عند استخدام Sentry مع App Router لالتقاط أخطاء
+// التنقّل بين الصفحات (router transitions) في متصفح العميل.
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

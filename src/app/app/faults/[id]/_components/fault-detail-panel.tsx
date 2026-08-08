@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   updateFaultStatusAction,
@@ -40,7 +40,7 @@ export function FaultDetailPanel({
     });
   }
 
-  function handleAddNote(e: React.FormEvent) {
+  function handleAddNote(e: FormEvent) {
     e.preventDefault();
     if (!note.trim()) return;
     setError(null);

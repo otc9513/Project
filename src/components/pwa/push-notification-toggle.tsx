@@ -62,21 +62,15 @@ export function PushNotificationToggle() {
       }
 
       const registration = await navigator.serviceWorker.ready;
-      
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        // استخدام BufferSource لتجاوز تعارض الأنواع في Next.js 15
-        applicationServerKey: urlBase64ToUint8Array(publicKey) as unknown as BufferSource,
+        applicationServerKey: urlBase64ToUint8Array(publicKey) as BufferSource,
       });
 
       const json = subscription.toJSON();
-      if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) {
-        throw new Error("بيانات اشتراك الإشعارات غير مكتملة");
-      }
-
       await subscribeToPushAction({
-        endpoint: json.endpoint,
-        keys: { p256dh: json.keys.p256dh, auth: json.keys.auth },
+        endpoint: json.endpoint!,
+        keys: { p256dh: json.keys!.p256dh, auth: json.keys!.auth },
         userAgent: navigator.userAgent,
       });
       setStatus("subscribed");

@@ -29,7 +29,7 @@ export async function createTenantForNewUser({
     );
   }
 
-  const baseSlug = slugify(userName || userEmail.split("@")[0]);
+  const baseSlug = slugify(userName || userEmail.split("@")[0] || "user");
   const slug = `${baseSlug}-${nanoid(5)}`.toLowerCase();
 
   // المرحلة 8: تبدأ كل مساحة عمل جديدة بحالة TRIAL (وليس ACTIVE مباشرة)

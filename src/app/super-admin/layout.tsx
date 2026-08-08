@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { requirePlatformAdmin } from "@/lib/platform/context";
 
@@ -23,7 +24,7 @@ const ROLE_LABEL: Record<string, string> = {
 export default async function SuperAdminLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   // نقطة الحراسة الوحيدة لكل لوحة Super Admin بأكملها: requirePlatformAdmin()
   // ترمي خطأ (يُعالَج في error.tsx بنفس هذا المجلد) إن لم يكن المستخدم

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import { prisma } from "@/lib/prisma";
 import "./globals.css";
@@ -60,7 +61,7 @@ export async function generateViewport(): Promise<Viewport> {
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const settings = await prisma.platformSettings.findUnique({ where: { id: "singleton" } });
 

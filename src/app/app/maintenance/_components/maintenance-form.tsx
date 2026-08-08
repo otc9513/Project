@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createMaintenanceAction } from "@/features/maintenance/actions/maintenance.actions";
 
@@ -20,7 +20,7 @@ export function MaintenanceForm({ generators }: { generators: GeneratorOption[] 
   const [nextDueDate, setNextDueDate] = useState("");
   const [description, setDescription] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     startTransition(async () => {

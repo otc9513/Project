@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { requireTenantContext } from "@/lib/tenant/context";
 import { getDashboardSummaryAction } from "@/features/dashboard/actions/dashboard.actions";
@@ -50,7 +51,7 @@ function StatCard({
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mb-6">
       <h2 className="mb-2 text-sm font-semibold text-gray-500">{title}</h2>

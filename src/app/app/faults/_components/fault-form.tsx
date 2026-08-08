@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createFaultAction } from "@/features/faults/actions/fault.actions";
 
@@ -25,7 +25,7 @@ export function FaultForm({ generators }: { generators: GeneratorOption[] }) {
   const [priority, setPriority] = useState("MEDIUM");
   const [description, setDescription] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     startTransition(async () => {

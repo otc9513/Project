@@ -4,6 +4,7 @@
   "private": true,
   "description": "أمبير (Ampere) - Generator Management OS: منصة SaaS لإدارة المولدات الأهلية",
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -65,9 +66,11 @@
     "autoprefixer": "^10.4.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.0.0",
+    "@eslint/eslintrc": "^3.1.0",
     "tsx": "^4.19.0",
     "vitest": "^2.1.4",
-    "vite-tsconfig-paths": "^5.1.0",    
+    "vite-tsconfig-paths": "^5.1.0",
+    "vitest-mock-extended": "^2.0.4",
     "@playwright/test": "^1.48.2",
     "@types/qrcode": "^1.5.5"
   },

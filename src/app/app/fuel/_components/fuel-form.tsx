@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   recordFuelPurchaseAction,
@@ -23,7 +23,7 @@ export function FuelForm({ generators }: { generators: GeneratorOption[] }) {
   const [supplier, setSupplier] = useState("");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     startTransition(async () => {

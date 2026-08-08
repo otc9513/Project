@@ -66,7 +66,7 @@ export function generateRecoveryCode(): string {
   const random = crypto.randomBytes(8);
   let code = "";
   for (let i = 0; i < 8; i++) {
-    code += alphabet[random[i] % alphabet.length];
+    code += alphabet[(random[i] ?? 0) % alphabet.length] ?? "";
     if (i === 3) code += "-";
   }
   return code;
