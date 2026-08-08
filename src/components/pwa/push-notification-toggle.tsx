@@ -60,17 +60,10 @@ export function PushNotificationToggle() {
       }
 
       const registration = await navigator.serviceWorker.ready;
-      const rawKey = urlBase64ToUint8Array(publicKey);
       
-      // التعديل هنا: استخدام slice لضمان أننا نمرر ArrayBuffer متوافق مع TypeScript
-      const subKey = rawKey.buffer.slice(
-        rawKey.byteOffset,
-        rawKey.byteOffset + rawKey.byteLength
-      );
-
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: subKey,
+        applicationServerKey: urlBase64ToUint8Array(publicKey) as unknown as BufferSource,
       });
 
       const json = subscription.toJSON();
