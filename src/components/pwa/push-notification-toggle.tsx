@@ -68,9 +68,17 @@ export function PushNotificationToggle() {
       });
 
       const json = subscription.toJSON();
+      if (!json.endpoint || !json.keys?.p256dh || !json.keys?.auth) {
+        // متصفح لا يُعيد بيانات اشتراك كاملة (نادر لكن ممكن) - لا فائدة
+        // من إرسال اشتراك ناقص للخادم، والأفضل التراجع بصمت هنا بدل ما
+        // يفشل النوع silently عند البناء أو وقت التشغيل.
+        await subscription.unsubscribe();
+        setStatus("unsubscribed");
+        return;
+      }
       await subscribeToPushAction({
-        endpoint: json.endpoint!,
-        keys: { p256dh: json.keys!.p256dh, auth: json.keys!.auth },
+        endpoint: json.endpoint,
+        keys: { p256dh: json.keys.p256dh, auth: json.keys.auth },
         userAgent: navigator.userAgent,
       });
       setStatus("subscribed");
