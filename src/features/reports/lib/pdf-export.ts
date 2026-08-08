@@ -182,8 +182,9 @@ function drawRow(
   let x = MARGIN;
   const font = bold ? cursor.boldFont : cursor.font;
   cols.forEach((text, idx) => {
-    drawCell(cursor.page, text, x, cursor.y, widths[idx], 10, font, hasArabicFont);
-    x += widths[idx];
+    const colWidth = widths[idx] ?? 100;
+    drawCell(cursor.page, text, x, cursor.y, colWidth, 10, font, hasArabicFont);
+    x += colWidth;
   });
   return { ...cursor, y: cursor.y - 16 };
 }
