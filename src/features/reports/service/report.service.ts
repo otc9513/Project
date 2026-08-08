@@ -110,7 +110,7 @@ export const reportService = {
     const monthly = months.map((m, idx) => ({
       year: m.year,
       month: m.month,
-      revenue: Number(results[idx]._sum.amount ?? 0),
+      revenue: Number(results[idx]?._sum.amount ?? 0),
     }));
 
     return {
