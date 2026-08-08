@@ -21,7 +21,7 @@ const loggedInSession = {
 describe("requirePlatformAdmin - بوابة 2FA (المرحلة 11)", () => {
   it("لا يُعيد توجيه حسابًا لم يُفعِّل 2FA إطلاقًا (mfaEnabled=false)", async () => {
     mockAuth.mockResolvedValue(loggedInSession);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.user.findUniqueOrThrow.mockResolvedValue({ mfaEnabled: false });
 
     const ctx = await requirePlatformAdmin();
@@ -34,10 +34,10 @@ describe("requirePlatformAdmin - بوابة 2FA (المرحلة 11)", () => {
 
   it("يُعيد توجيه حسابًا فعَّل 2FA لكن جلسته الحالية غير مُتحقَّق منها بعد", async () => {
     mockAuth.mockResolvedValue(loggedInSession);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.user.findUniqueOrThrow.mockResolvedValue({ mfaEnabled: true });
     mockGetCurrentSessionToken.mockResolvedValue("session_token_abc");
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.session.findUnique.mockResolvedValue({ mfaVerifiedAt: null });
 
     await requirePlatformAdmin();
@@ -47,10 +47,10 @@ describe("requirePlatformAdmin - بوابة 2FA (المرحلة 11)", () => {
 
   it("لا يُعيد توجيه حسابًا فعَّل 2FA وجلسته الحالية مُتحقَّق منها بالفعل", async () => {
     mockAuth.mockResolvedValue(loggedInSession);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.user.findUniqueOrThrow.mockResolvedValue({ mfaEnabled: true });
     mockGetCurrentSessionToken.mockResolvedValue("session_token_abc");
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.session.findUnique.mockResolvedValue({ mfaVerifiedAt: new Date() });
 
     const ctx = await requirePlatformAdmin();

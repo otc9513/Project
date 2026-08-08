@@ -100,7 +100,7 @@ export default async function ReportsPage({
         <div className="rounded-xl border border-warning/30 bg-warning/5 p-6 text-center">
           <p className="text-sm font-medium text-warning">{errorMessage}</p>
           <p className="mt-1 text-xs text-gray-500">
-            التقارير المتقدمة متاحة ضمن خطتَي "احترافية" و"مؤسسية" فقط.
+            التقارير المتقدمة متاحة ضمن خطتَي &quot;احترافية&quot; و&quot;مؤسسية&quot; فقط.
           </p>
         </div>
       )}

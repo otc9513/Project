@@ -29,7 +29,7 @@ describe("createRenewalInvoiceIfDue - idempotency (المرحلة 7 / 8)", () =>
   it("لا يُنشئ فاتورة ثانية إن وُجدت فاتورة لنفس الفترة بالفعل (الفحص المسبق)", async () => {
     // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.tenant.findUniqueOrThrow.mockResolvedValue(fullTenant);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.saasInvoice.findFirst.mockResolvedValue({ id: "existing_invoice" });
 
     const result = await platformBillingRepository.createRenewalInvoiceIfDue(baseTenant);
@@ -39,11 +39,11 @@ describe("createRenewalInvoiceIfDue - idempotency (المرحلة 7 / 8)", () =>
   });
 
   it("ينشئ الفاتورة عند عدم وجود فاتورة سابقة لنفس الفترة", async () => {
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.tenant.findUniqueOrThrow.mockResolvedValue(fullTenant);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.saasInvoice.findFirst.mockResolvedValue(null);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.saasInvoice.create.mockResolvedValue({ id: "new_invoice" });
 
     const result = await platformBillingRepository.createRenewalInvoiceIfDue(baseTenant);
@@ -58,9 +58,9 @@ describe("createRenewalInvoiceIfDue - idempotency (المرحلة 7 / 8)", () =>
    * هذا الاختبار فعليًا بعد npm install، فتحقّق من التوقيع الفعلي إن فشل.
    */
   it("يلتقط انتهاك القيد الفريد (P2002) من تشغيل متزامن ويُعيد already_exists بدل رمي خطأ", async () => {
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.tenant.findUniqueOrThrow.mockResolvedValue(fullTenant);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.saasInvoice.findFirst.mockResolvedValue(null); // الفحص المسبق لم يرَ شيئًا (تسابق - سبقنا تشغيل آخر)
 
     const p2002Error = new Prisma.PrismaClientKnownRequestError("Unique constraint failed", {
@@ -75,9 +75,9 @@ describe("createRenewalInvoiceIfDue - idempotency (المرحلة 7 / 8)", () =>
   });
 
   it("يُعيد رمي أي خطأ آخر غير P2002 (لا يُخفي أعطالًا حقيقية)", async () => {
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.tenant.findUniqueOrThrow.mockResolvedValue(fullTenant);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.saasInvoice.findFirst.mockResolvedValue(null);
     prismaMock.saasInvoice.create.mockRejectedValue(new Error("db connection lost"));
 

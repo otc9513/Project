@@ -26,7 +26,7 @@ describe("findVisibleForTenant", () => {
   });
 
   it("إعلان مستهدِف لمستأجر آخر فقط لا يظهر لهذا المستأجر (منع تسريب - المتطلب الأمني الصريح للمرحلة 2)", async () => {
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.announcement.findMany.mockResolvedValue([
       announcement("a1", { allTenants: false, tenantIds: ["tenant_other"], planIds: [] }),
     ]);
@@ -36,7 +36,7 @@ describe("findVisibleForTenant", () => {
   });
 
   it("إعلان مستهدِف لـ tenantId هذا المستأجر تحديدًا يظهر له", async () => {
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.announcement.findMany.mockResolvedValue([
       announcement("a1", { allTenants: false, tenantIds: ["tenant_x"], planIds: [] }),
     ]);
@@ -46,7 +46,7 @@ describe("findVisibleForTenant", () => {
   });
 
   it("إعلان مستهدِف بخطة (planId) هذا المستأجر يظهر له حتى بدون استهداف tenantId مباشر", async () => {
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.announcement.findMany.mockResolvedValue([
       announcement("a1", { allTenants: false, tenantIds: [], planIds: ["plan_x"] }),
     ]);
@@ -56,7 +56,7 @@ describe("findVisibleForTenant", () => {
   });
 
   it("لا allTenants ولا tenantId مطابق ولا planId مطابق = لا يظهر", async () => {
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.announcement.findMany.mockResolvedValue([
       announcement("a1", { allTenants: false, tenantIds: ["tenant_other"], planIds: ["plan_other"] }),
     ]);

@@ -23,7 +23,7 @@ describe("recordPayment - idempotency عبر providerRef (webhook مكرَّر -
 
   it("providerRef غير موجود سابقًا يُتابِع للمسار العادي (transaction فعلي)", async () => {
     prismaMock.saasPayment.findUnique.mockResolvedValue(null);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     prismaMock.$transaction.mockImplementation(async (fn) =>
       fn({
         saasInvoice: {
@@ -53,7 +53,7 @@ describe("recordPayment - idempotency عبر providerRef (webhook مكرَّر -
     });
 
     expect(prismaMock.$transaction).toHaveBeenCalledTimes(1);
-    // @ts-expect-error
+    // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     expect(result.id).toBe("new_payment");
   });
 });

@@ -78,7 +78,7 @@ describe("resolveAudienceSubscriptions", () => {
         // العضوية الوحيدة لهذا المستخدم بدور OWNER هي بمستأجر آخر تمامًا
         user: { memberships: [{ tenantId: "tenant_2", role: "OWNER" }] },
       },
-      // @ts-expect-error
+      // @ts-expect-error - كائن جزئي كافٍ لغرض هذا الاختبار
     ]);
 
     const result = await platformNotificationRepository.resolveAudienceSubscriptions({
