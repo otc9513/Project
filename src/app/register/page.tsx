@@ -1,14 +1,14 @@
 import { GoogleSignInButton } from "@/components/auth/google-signin-button";
 import { AuthMethodTabs } from "@/components/auth/auth-method-tabs";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <main className="flex min-h-screen items-center justify-center p-6">
       <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-950">
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-2xl font-bold dark:text-white">أمبير</h1>
+          <h1 className="mb-2 text-2xl font-bold dark:text-white">إنشاء حساب</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            منصة إدارة المولدات الأهلية
+            يتم إنشاء حسابك ومساحة عملك فورًا - بلا كود تحقق
           </p>
         </div>
 
@@ -20,12 +20,12 @@ export default function LoginPage() {
           <div className="h-px flex-1 bg-gray-200 dark:bg-gray-800" />
         </div>
 
-        <AuthMethodTabs mode="login" />
+        <AuthMethodTabs mode="register" />
 
         <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-          ليس لديك حساب؟{" "}
-          <a href="/register" className="font-medium text-primary hover:underline">
-            إنشاء حساب
+          لديك حساب بالفعل؟{" "}
+          <a href="/login" className="font-medium text-primary hover:underline">
+            تسجيل الدخول
           </a>
         </p>
       </div>

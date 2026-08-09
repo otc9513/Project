@@ -15,7 +15,15 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-url      = env("DATABASE_URL")
+  // DATABASE_URL يجب أن يشير لرابط الـ Connection Pooler (PgBouncer) عند
+  // Supabase - غالبًا بالمنفذ 6543 مع `?pgbouncer=true` - لأن بيئات
+  // serverless مثل Vercel لا تصل غالبًا للاتصال المباشر بالمنفذ 5432.
+  url       = env("DATABASE_URL")
+  // DIRECT_URL يُستخدم فقط وقت `prisma migrate` (اتصال مباشر بالمنفذ
+  // 5432، بدون PgBouncer) لأن أدوات الترحيل تحتاج ميزات جلسة (session-level
+  // features مثل advisory locks) لا يدعمها اتصال الـ pooler. لا يُستخدم
+  // إطلاقًا وقت تشغيل التطبيق العادي (queries عبر Prisma Client فقط).
+  directUrl = env("DIRECT_URL")
 }
 
 // ----------------------------------------------------------------------------
@@ -111,7 +119,9 @@ enum TenantStatus {
 }
 
 // ----------------------------------------------------------------------------
-// المستخدمون والمصادقة (Auth.js / Google OAuth فقط)
+// المستخدمون والمصادقة (Auth.js لجلسات Google؛ Email/Phone+Password تُدار
+// يدويًا خارج next-auth Credentials - راجع src/lib/auth/session-manager.ts
+// لسبب هذا القرار المعماري)
 // ----------------------------------------------------------------------------
 
 model User {
@@ -120,6 +130,14 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
+  // دعم تسجيل الدخول/إنشاء الحساب برقم الهاتف العراقي (E.164، مثال:
+  // +9647701234567) بجانب Google - راجع src/lib/auth/phone.ts للتطبيع.
+  // اختياري لأن مستخدمي Google الحاليين والمستقبليين لا يملكونه أبدًا.
+  phone         String?   @unique
+  // تُملأ فقط لحسابات البريد/الهاتف (Password Auth) - تبقى null دائمًا
+  // لحسابات Google الخالصة. مُخزَّنة كـ hash (bcrypt) فقط، لا نص صريح
+  // أبدًا - راجع src/lib/auth/password.ts.
+  passwordHash  String?   @db.Text
   // قرار هندسي (المرحلة 8): استُبدل `isSuperAdmin Boolean` (لم يكن مستخدَمًا
   // بعد خارج auth.config.ts) بحقل دور اختياري بثلاث قيم، لأن مواصفات
   // "Admin Users" (القسم 8) تتطلب صراحةً Super Admin/Support Admin/Finance
