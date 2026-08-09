@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import crypto from "node:crypto";
 import { Prisma } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, RateLimitExceededError } from "@/lib/security/rate-limit";
 import { hashPassword, verifyPassword } from "./password";
@@ -41,6 +42,39 @@ function isUniqueConstraintError(error: unknown, field: string): boolean {
   );
 }
 
+/**
+ * تسجيل آمن مؤقت لأخطاء التسجيل غير المتوقعة (خطوة تشخيص - راجع التقرير
+ * النهائي). يلتقط فقط: اسم الخطأ، كود Prisma إن وُجد، وأسماء الحقول
+ * المتعارضة (P2002 target - أسماء أعمدة فقط، لا قيمها أبدًا)، والعملية
+ * التي فشلت. لا يُسجَّل أبدًا: كلمة المرور، الـ hash، أي token، أي cookie،
+ * أو أي محتوى آخر من جسم الطلب. يُستخدم Sentry.captureException (نفس
+ * الـ logger المستخدَم فعليًا في billing-cron.service.ts) + console.error
+ * كنسخة احتياطية محلية وقت التطوير.
+ */
+function logAuthFailure(operation: string, error: unknown): void {
+  const safeMeta: Record<string, unknown> = { operation };
+
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    safeMeta.prismaCode = error.code;
+    const target = (error.meta as { target?: string[] } | undefined)?.target;
+    if (Array.isArray(target)) safeMeta.conflictingFields = target;
+  } else if (error instanceof Prisma.PrismaClientValidationError) {
+    safeMeta.prismaCode = "VALIDATION_ERROR";
+  } else if (error instanceof Prisma.PrismaClientInitializationError) {
+    safeMeta.prismaCode = "INITIALIZATION_ERROR";
+    // غالبًا يعني هذا فشل الاتصال بقاعدة البيانات نفسها (رابط خاطئ/DB
+    // متوقفة) وليس خطأً في منطق التطبيق.
+    safeMeta.errorCode = error.errorCode;
+  }
+
+  safeMeta.errorName = error instanceof Error ? error.name : typeof error;
+  // نمرّر الرسالة كسياق فقط عبر Sentry (وليس عبر console في production)
+  // لأن رسائل Prisma النصية أحيانًا تتضمّن أجزاءً من الاستعلام؛ حقول
+  // meta أعلاه هي المصدر الآمن الموثوق دائمًا لتحديد السبب.
+  console.error(`[auth:${operation}] فشل غير متوقع`, safeMeta);
+  Sentry.captureException(error, { tags: { authOperation: operation }, extra: safeMeta });
+}
+
 // ============================================================================
 // التسجيل بالبريد الإلكتروني
 // ============================================================================
@@ -76,6 +110,7 @@ export async function registerWithEmailAction(
     if (isUniqueConstraintError(error, "email")) {
       return { ok: false, error: "البريد الإلكتروني مستخدم مسبقًا" };
     }
+    logAuthFailure("register-email:create-user", error);
     return { ok: false, error: GENERIC_SERVER_ERROR };
   }
 
@@ -86,10 +121,11 @@ export async function registerWithEmailAction(
       userName: name ?? email.split("@")[0] ?? email,
     });
     await createDatabaseSessionCookie(userId);
-  } catch {
+  } catch (error) {
     // فشل ما بعد إنشاء المستخدم (مساحة العمل/الجلسة): لا نترك المستخدم في
     // حالة نصف-مسجَّل بصمت. الحساب أُنشئ فعليًا، لكن دون جلسة سارية -
     // يمكنه إعادة المحاولة عبر تسجيل الدخول لاحقًا بعد إصلاح السبب.
+    logAuthFailure("register-email:provision-or-session", error);
     return { ok: false, error: GENERIC_SERVER_ERROR };
   }
 
@@ -178,6 +214,7 @@ export async function registerWithPhoneAction(
     if (isUniqueConstraintError(error, "phone") || isUniqueConstraintError(error, "email")) {
       return { ok: false, error: "رقم الهاتف مستخدم مسبقًا" };
     }
+    logAuthFailure("register-phone:create-user", error);
     return { ok: false, error: GENERIC_SERVER_ERROR };
   }
 
@@ -188,7 +225,8 @@ export async function registerWithPhoneAction(
       userName: name ?? phone,
     });
     await createDatabaseSessionCookie(userId);
-  } catch {
+  } catch (error) {
+    logAuthFailure("register-phone:provision-or-session", error);
     return { ok: false, error: GENERIC_SERVER_ERROR };
   }
 
